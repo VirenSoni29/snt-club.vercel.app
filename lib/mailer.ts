@@ -285,7 +285,7 @@ export async function sendEventConfirmationMail(
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 8px;">
                 <tr>
                   <td style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #065f46; letter-spacing: 1px; text-transform: uppercase;">
-                    &check; Registration Confirmed
+                    &#10004; Registration Confirmed
                   </td>
                 </tr>
               </table>
