@@ -228,7 +228,7 @@ export default function EventRegistrationForm({ event, title }: Props) {
               type="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="you@skit.ac.in or you@gmail.com"
+              placeholder="Your Email ID"
               className={inputClass}
             />
           </div>
@@ -256,6 +256,7 @@ export default function EventRegistrationForm({ event, title }: Props) {
               value={form.phone}
               onChange={handleChange}
               placeholder="10-digit mobile"
+              maxLength={10}
               className={inputClass}
             />
           </div>
