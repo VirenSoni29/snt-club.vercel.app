@@ -13,11 +13,11 @@ export type EventConfig = {
 
 // Converts "/events/Aarambh2026" -> "aarambh2026"
 function slugFromLink(link: string): string {
-  return (link.replace(/\/+$/, "").split("/").filter(Boolean).pop() ?? "").toLowerCase();
+  return (link.replace(/\/+$/, "").split("/").filter(Boolean).pop() ?? "");
 }
 
 export function getEventConfig(event: string): EventConfig | null {
-  const target = event.toLowerCase();
+  const target = event;
   const match = eventDetails.find(
     (e: any) => slugFromLink(e.eventRegLink) === target
   );
