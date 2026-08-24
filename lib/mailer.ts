@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { generateIcsAttachment } from './calendar';
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -228,9 +229,10 @@ export async function sendEventConfirmationMail(
   to: string,
   name: string,
   eventTitle: string,
-  eventDate: string = 'September 1, 2026',
-  eventTime: string = '1:30 PM – 3:00 PM IST',
-  venue: string = 'JC Bose Seminar Hall, Civil Block',
+  eventDate: string,
+  eventTime: string,
+  venue: string,
+  startDateTime: string = "",
 ) {
   // Synchronized plain-text version for 100% multipart consistency
   const textContent =
@@ -361,11 +363,198 @@ export async function sendEventConfirmationMail(
 </html>
   `.trim();
 
+  let icsContent: string | undefined;
+  if (startDateTime) {
+    try {
+      icsContent = await generateIcsAttachment({
+        title: eventTitle,
+        description: `Your registration for ${eventTitle} organized by Science & Technology Club, SKIT is confirmed.`,
+        startDateTime,
+        durationMinutes: 90,
+        venue,
+      });
+    } catch (err) {
+      console.error("[ICS] Error generating invite:", err);
+    }
+  }
+
   await transporter.sendMail({
     from: `"Science & Technology Club" <${process.env.EMAIL_USER}>`,
     to,
     replyTo: process.env.EMAIL_USER,
     subject: `Registration Confirmed: ${eventTitle}`,
+    text: textContent,
+    html: htmlContent,
+    // Native calendar invite payload
+    ...(icsContent
+      ? {
+          icalEvent: {
+            filename: "invite.ics",
+            method: "REQUEST",
+            content: icsContent,
+          },
+        }
+      : {}),
+  });
+}
+
+/* ---------- EVENT REMINDER MAIL ---------- */
+export async function sendEventReminderMail(
+  to: string,
+  name: string,
+  eventTitle: string,
+  timeframeLabel: string, // e.g. "Starts in 3 Days", "Starts in 1 Hour"
+  eventDate: string,
+  eventTime: string,
+  venue: string
+) {
+  const textContent = 
+    `Hi ${name},\n\n` +
+    `Reminder: ${eventTitle} is scheduled ${timeframeLabel.toLowerCase()}.\n\n` +
+    `Details:\n` +
+    `• Event: ${eventTitle}\n` +
+    `• Date: ${eventDate}\n` +
+    `• Time: ${eventTime}\n` +
+    `• Venue: ${venue}\n\n` +
+    `Please ensure you arrive 10 minutes early.\n\n` +
+    `Science & Technology Club, SKIT Jaipur\n` +
+    `https://snt-club.vercel.app`;
+
+  const htmlContent = `
+  <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>Event Reminder: ${eventTitle}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f1f5f9; width: 100%; margin: 0; padding: 32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; width: 100%; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          
+          <!-- Club Header -->
+          <tr>
+            <td style="background-color: #0A146E; padding: 22px 32px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td>
+                    <span style="font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: 0.3px;">Science &amp; Technology Club</span>
+                    <span style="font-size: 13px; color: #93c5fd; margin-left: 6px;">&bull; SKIT Jaipur</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- High-Visibility Reminder Banner -->
+          <tr>
+            <td style="padding: 24px 32px 0 32px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 16px 20px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td style="font-size: 12px; font-weight: 700; color: #1d4ed8; letter-spacing: 1px; text-transform: uppercase;">
+                          ⚡ UPCOMING EVENT REMINDER
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-size: 20px; font-weight: 800; color: #1e3a8a; padding-top: 4px;">
+                          ${timeframeLabel}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Title & Personalized Greeting -->
+          <tr>
+            <td style="padding: 24px 32px 12px 32px;">
+              <h1 style="margin: 0 0 16px 0; font-size: 24px; font-weight: 700; color: #0f172a; line-height: 1.3;">
+                ${eventTitle}
+              </h1>
+              <p style="margin: 0; font-size: 15px; color: #334155; line-height: 1.6;">
+                Hi <strong>${name}</strong>,
+              </p>
+              <p style="margin: 8px 0 0 0; font-size: 15px; color: #475569; line-height: 1.6;">
+                This is a friendly reminder for your upcoming registered session. Please make sure to be on time!
+              </p>
+            </td>
+          </tr>
+
+          <!-- Schedule & Venue Details Table -->
+          <tr>
+            <td style="padding: 12px 32px 24px 32px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; width: 90px; font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Date</td>
+                  <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a; font-weight: 700;">${eventDate}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Time</td>
+                  <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a; font-weight: 700;">${eventTime}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 14px 18px; font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Venue</td>
+                  <td style="padding: 14px 18px; font-size: 14px; color: #0f172a; font-weight: 600;">${venue}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Instructions & Signoff -->
+          <tr>
+            <td style="padding: 0 32px 28px 32px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 18px;">
+                <tr>
+                  <td style="border-left: 3px solid #0A146E; padding-left: 12px; font-size: 13px; color: #475569; line-height: 1.5;">
+                    Please arrive at the venue <strong>10 minutes before the start time</strong> for smooth seating.
+                  </td>
+                </tr>
+              </table>
+              <p style="margin: 0; font-size: 14px; color: #475569; line-height: 1.5;">
+                Best regards,<br />
+                <strong style="color: #0A146E;">Science &amp; Technology Club</strong><br />
+                Swami Keshvanand Institute of Technology (SKIT), Jaipur
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 32px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
+                    You are receiving this because you registered for an S&amp;T Club event.
+                  </td>
+                  <td align="right" style="font-size: 12px; white-space: nowrap;">
+                    <a href="https://snt-club.vercel.app" target="_blank" style="color: #0A146E; font-weight: 600; text-decoration: underline;">snt-club.vercel.app</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+
+  await transporter.sendMail({
+    from: `"Science & Technology Club, SKIT" <${process.env.EMAIL_USER}>`,
+    to,
+    replyTo: process.env.EMAIL_USER,
+    subject: `Reminder: ${eventTitle} (${timeframeLabel})`,
     text: textContent,
     html: htmlContent,
   });

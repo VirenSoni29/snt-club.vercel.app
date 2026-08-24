@@ -21,6 +21,10 @@ const eventDetails = [
     eventStatus: 'past',
     eventRegLink: '/events/techtalkwithalumni',
     eventRegStatus: 'closed',
+    startDateTime: '',
+    eventDate: '',
+    eventTime: '',
+    eventVenue: '',
   },
   // {
   //   eventName: 'CSS Battle',
@@ -54,6 +58,10 @@ const eventDetails = [
     eventStatus: 'past',
     eventRegLink: '/events/DesignwithS&T',
     eventRegStatus: 'closed',
+    startDateTime: '',
+    eventDate: '',
+    eventTime: '',
+    eventVenue: '',
   },
   // {
   //   eventName: 'CODE-A-THON',
@@ -105,6 +113,10 @@ const eventDetails = [
     eventStatus: 'ongoing',
     eventRegLink: '/events/Aarambh2026',
     eventRegStatus: 'live',
+    startDateTime: '2026-09-01T13:30:00+05:30',
+    eventDate: 'September 1, 2026',
+    eventTime: '1:30 PM - 3:00 PM',
+    eventVenue: 'JC Bose Seminar Hall, Civil Block',
   },
   // {
   //   eventName: 'Tech Talk With Alumni',
