@@ -10,6 +10,12 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const REMINDER_WINDOWS = [
+  {
+    key: "broadcast_aug24",
+    label: "Event Update & Schedule Confirmation",
+    minHours: 180,
+    maxHours: 240,
+  },
   { key: "3d", label: "Starts in 3 Days", minHours: 48, maxHours: 72 },
   { key: "2d", label: "Starts in 2 Days", minHours: 24, maxHours: 48 },
   { key: "1d", label: "Starts Tomorrow",  minHours: 2,  maxHours: 24 },
@@ -46,7 +52,7 @@ export async function POST(req: Request) {
     const diffHours = (eventTime - now) / (1000 * 60 * 60);
 
     // Skip past events or events more than 72 hours out
-    if (diffHours <= 0 || diffHours > 72) continue;
+    if (diffHours <= 0 || diffHours > 250) continue;
 
     const targetWindow = REMINDER_WINDOWS.find(
       (w) => diffHours > w.minHours && diffHours <= w.maxHours
