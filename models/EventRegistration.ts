@@ -30,6 +30,11 @@ const EventRegistrationSchema = new Schema(
       enum: [1, 2, 3, 4],
       required: true,
     },
+    remindersSent: {
+      type: [String],
+      default: [],
+      index: true
+    }
   },
   { timestamps: true }
 );

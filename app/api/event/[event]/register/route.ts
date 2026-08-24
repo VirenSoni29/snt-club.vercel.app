@@ -103,11 +103,11 @@ export async function POST(
 
     // ---- Send confirmation mail immediately; queue as fallback on failure ----
     try {
-      await sendEventConfirmationMail(email, name, config.title);
+      await sendEventConfirmationMail(email, name, config.title, config.formattedDate ?? "", config.formattedTime ?? "", config.venue ?? "", config.startDateTime ?? "");
     } catch {
       await EmailJob.create({
         type: "EVENT",
-        payload: { email, name, eventTitle: config.title },
+        payload: { email, name, eventTitle: config.title, eventDate: config.formattedDate, eventTime: config.formattedTime, venue: config.venue, startDateTime: config.startDateTime },
       });
     }
 

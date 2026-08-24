@@ -60,7 +60,7 @@ export async function POST(
     }
 
     // ---- Generate 6-digit OTP, store hashed, 10-min expiry ----
-    const code = crypto.randomInt(100000, 1000000).toString(); // 6 digits
+    const code = crypto.randomInt(40000, 1000000).toString().padStart(6, '0'); // 6 digits
     const hashed = await bcrypt.hash(code, 10);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 

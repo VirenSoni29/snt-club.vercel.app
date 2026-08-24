@@ -5,6 +5,7 @@ import {
   sendOtpMail,
   sendRegistrationMail,
   sendEventConfirmationMail,
+  sendEventReminderMail,
 } from "@/lib/mailer";
 
 export const dynamic = "force-dynamic";
@@ -17,8 +18,11 @@ async function sendForJob(job: any) {
     const { email, name, username, password } = job.payload;
     await sendRegistrationMail(email, name, username, password);
   } else if (job.type === "EVENT") {
-    const { email, name, eventTitle } = job.payload;
-    await sendEventConfirmationMail(email, name, eventTitle);
+    const { email, name, eventTitle, eventDate, eventTime, venue, startDateTime } = job.payload;
+    await sendEventConfirmationMail(email, name, eventTitle, eventDate, eventTime, venue, startDateTime);
+  } else if (job.type === "REMINDER") {
+    const { email, name, eventTitle, timeframeLabel, eventDate, eventTime, venue } = job.payload;
+    await sendEventReminderMail(email, name, eventTitle, timeframeLabel, eventDate, eventTime, venue);
   }
 }
 
