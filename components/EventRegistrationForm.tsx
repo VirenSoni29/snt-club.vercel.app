@@ -221,7 +221,7 @@ export default function EventRegistrationForm({ event, title }: Props) {
 
           <div className="md:col-span-2">
             <label className="mb-1 block text-sm font-semibold">
-              College Email
+              Email Address
             </label>
             <input
               name="email"
@@ -235,13 +235,13 @@ export default function EventRegistrationForm({ event, title }: Props) {
 
           <div>
             <label className="mb-1 block text-sm font-semibold">
-              Roll Number or Enrollment Number (B26XXXX)
+              Enrollment Number (B26XXXX / TMPXXXX)
             </label>
             <input
               name="rollNo"
               value={form.rollNo}
               onChange={handleChange}
-              placeholder="Roll no."
+              placeholder="Enrollment No."
               className={inputClass}
             />
           </div>
