@@ -189,6 +189,18 @@ const sntTeamMember = [
     memberInsta: '',
     memberLinkedin: 'https://www.linkedin.com/in/akshat-jain-19299337a/',
   },
+  {
+    memberName: 'Anuravi Khandelwal',
+    memberPost: 'Student_Team',
+    memberTeam: 'Development_Team',
+    memberPhoto: '',
+    memberRole: '',
+    memberDepartment: '',
+    memberYear: '',
+    memberBranch: '',
+    memberInsta: '',
+    memberLinkedin: 'https://www.linkedin.com/in/anuravi-khandelwal-7b4a7336b/',
+  },
   // Tutor Team
   {
     memberName: 'Charu Jain',

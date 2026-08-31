@@ -98,14 +98,18 @@ const eventDetails = [
   //   eventRegStatus: 'closed',
   // },
 
-  // {
-  //   eventName: 'Ask S&T',
-  //   eventDesc: 'Join us for ASK S&T, an interactive session where 1st-year students / (freshers) can get all their technical and non-technical questions answered by our expert club members!',
-  //   eventImg: aarambh_img,
-  //   eventStatus: 'upcoming',
-  //   eventRegLink: '/events/AskSnT',
-  //   eventRegStatus: 'closed',
-  // },
+  {
+    eventName: 'Ask S&T',
+    eventDesc: 'Join us for ASK S&T, an interactive session where 1st-year students / (freshers) can get all their technical and non-technical questions answered by our expert club members!',
+    eventImg: aarambh_img,
+    eventStatus: 'ongoing',
+    eventRegLink: '/events/AskSnT',
+    eventRegStatus: 'live',
+    startDateTime: '2026-09-02T13:30:00+05:30',
+    eventDate: 'September 2, 2026',
+    eventTime: '1:30 PM - 3:00 PM',
+    eventVenue: '4F-L4, Civil Block',
+  },
   {
     eventName: 'Aarambh 2026',
     eventDesc: "Join us at AARAMBH for an exciting session where we'll welcome freshers and introduce them to the Science and Technology Club, showcasing innovation, insights, and opportunities!",

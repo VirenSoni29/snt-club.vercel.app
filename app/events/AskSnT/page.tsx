@@ -2,12 +2,12 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { aarambh_img } from '@/assets/index';
+import { flutterworkshop_img } from '@/assets/index';
 import EventRegistrationForm from '@/components/EventRegistrationForm';
 import { useSearchParams } from 'next/navigation';
 import EventAttendanceForm from '@/components/EventAttendaceForm';
 
-function AarambhPage() {
+function AskSnTPage() {
   const eventParams = useSearchParams();
   const attendance = eventParams.get('attendance');
 
@@ -17,14 +17,12 @@ function AarambhPage() {
         {/* HERO */}
         <div className="grid grid-cols-12 items-center gap-6 rounded-[24px] bg-[#0A146E] p-6 text-white md:p-10">
           <div className="col-span-12 mx-auto md:col-span-4">
-            <Image src={aarambh_img} alt="Aarambh" className="w-[220px] md:w-[280px]" priority />
+            <Image src={flutterworkshop_img} alt="AskSnT" className="w-[220px] md:w-[280px]" priority />
           </div>
           <div className="col-span-12 md:col-span-8">
-            <p className="text-3xl font-bold md:text-5xl">Aarambh</p>
+            <p className="text-3xl font-bold md:text-5xl">Ask S&amp;T</p>
             <p className="mt-3 text-sm text-white/80 md:text-lg">
-              The beginning of your journey with the Science &amp; Technology Club. Aarambh is our flagship kickoff
-              event for newcomers — a hands-on introduction to everything the club has to offer. Register below to
-              secure your spot.
+              Got questions? ASK S&T! Join us for an interactive session with the Science & Technology Club where you can bring your technical and non-technical questions, clear your doubts, and get insights from experienced club members. Whether you’re curious about technology, the club, or anything in between, ASK S&T is your space to ask, explore, and learn. Register below and come get your questions answered!
             </p>
             <p className="mt-4 inline-block rounded-full bg-[#EE4B76] px-4 py-1 text-sm font-semibold">
               Registrations Open
@@ -35,9 +33,9 @@ function AarambhPage() {
         {/* SHARED REGISTRATION FORM */}
         <div className="mt-10">
           {attendance ? (
-            <EventAttendanceForm event="Aarambh2026" title="Aarambh" />
+            <EventAttendanceForm event="AskSnT" title="Ask S&T" />
           ) : (
-            <EventRegistrationForm event="Aarambh2026" title="Aarambh" />
+            <EventRegistrationForm event="AskSnT" title="Ask S&T" />
           )}
         </div>
       </div>
@@ -45,4 +43,4 @@ function AarambhPage() {
   );
 }
 
-export default AarambhPage;
+export default AskSnTPage;
