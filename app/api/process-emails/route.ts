@@ -26,36 +26,54 @@ async function sendForJob(job: any) {
   }
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function processQueue() {
   await connectDB();
 
-  // Pull a batch of pending jobs. This is a once-a-day fallback sweep for
-  // mails that failed to send inline at registration time.
-  const jobs = await EmailJob.find({ status: "PENDING" }).limit(100);
+  // Pull a batch of pending jobs that have not exceeded retry limits
+  const jobs = await EmailJob.find({
+    status: "PENDING",
+  }).limit(50);
 
-  // Send in parallel but bounded, so we clear the batch fast without
-  // hammering Gmail's SMTP connection all at once.
-  const CONCURRENCY = 5;
+  // Send in pairs with a small jitter to avoid throttling Gmail SMTP connections
+  const CONCURRENCY = 2;
   let sent = 0;
   let failed = 0;
 
   for (let i = 0; i < jobs.length; i += CONCURRENCY) {
     const slice = jobs.slice(i, i + CONCURRENCY);
+
     await Promise.all(
       slice.map(async (job) => {
         try {
           await sendForJob(job);
-          job.status = "SENT";
-          await job.save();
+          await EmailJob.updateOne(
+            { _id: job._id },
+            { $set: { status: "SENT", processedAt: new Date() } }
+          );
           sent++;
-        } catch {
-          job.retries += 1;
-          job.status = job.retries > 3 ? "FAILED" : "PENDING";
-          await job.save();
+        } catch (error) {
+          const nextRetries = (job.retries || 0) + 1;
+          await EmailJob.updateOne(
+            { _id: job._id },
+            {
+              $set: {
+                retries: nextRetries,
+                status: nextRetries > 3 ? "FAILED" : "PENDING",
+                lastError: error instanceof Error ? error.message : "Unknown error",
+              },
+            }
+          );
           failed++;
         }
       })
     );
+
+    // 250ms breather between chunks so the SMTP socket doesn't choke
+    if (i + CONCURRENCY < jobs.length) {
+      await sleep(250);
+    }
   }
 
   return { processed: jobs.length, sent, failed };

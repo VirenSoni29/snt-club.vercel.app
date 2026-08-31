@@ -10,16 +10,10 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const REMINDER_WINDOWS = [
-  {
-    key: "broadcast_aug24",
-    label: "Event Update & Schedule Confirmation",
-    minHours: 180,
-    maxHours: 240,
-  },
   { key: "3d", label: "Starts in 3 Days", minHours: 48, maxHours: 72 },
   { key: "2d", label: "Starts in 2 Days", minHours: 24, maxHours: 48 },
   { key: "1d", label: "Starts Tomorrow",  minHours: 2,  maxHours: 24 },
-  { key: "1h", label: "Starts in 1 Hour", minHours: 0,  maxHours: 2 },
+  { key: "1h", label: "Starts in 1 Hour", minHours: 0,  maxHours: 1 },
 ];
 
 function isAuthorized(req: Request): boolean {
@@ -52,7 +46,7 @@ export async function POST(req: Request) {
     const diffHours = (eventTime - now) / (1000 * 60 * 60);
 
     // Skip past events or events more than 72 hours out
-    if (diffHours <= 0 || diffHours > 250) continue;
+    if (diffHours <= 0 || diffHours > 72) continue;
 
     const targetWindow = REMINDER_WINDOWS.find(
       (w) => diffHours > w.minHours && diffHours <= w.maxHours
@@ -66,7 +60,9 @@ export async function POST(req: Request) {
       remindersSent: { $ne: targetWindow.key },
     }).limit(50);
 
-    const CONCURRENCY = 4;
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const CONCURRENCY = 2; // Send 2 emails concurrently at a time
     for (let i = 0; i < attendees.length; i += CONCURRENCY) {
       const chunk = attendees.slice(i, i + CONCURRENCY);
 
@@ -78,14 +74,15 @@ export async function POST(req: Request) {
               user.name,
               event.title,
               targetWindow.label,
-              event.formattedDate || "Coming Soon",
-              event.formattedTime || "Refer Schedule",
-              event.venue || "SKIT Campus"
+              event.formattedDate || 'Coming Soon',
+              event.formattedTime || 'Refer Schedule',
+              event.venue || 'SKIT Campus',
             );
-          } catch {
-            // Queue fallback in case of connection hiccup
+          } catch (err) {
+            console.error(`[SMTP ERROR] Failed for ${user.email}:`, err);
+            // Fallback to queue if SMTP hiccups
             await EmailJob.create({
-              type: "REMINDER",
+              type: 'REMINDER',
               payload: {
                 email: user.email,
                 name: user.name,
@@ -98,15 +95,16 @@ export async function POST(req: Request) {
             });
           }
 
-          // Atomically tag the user with this interval
-          await EventRegistration.updateOne(
-            { _id: user._id },
-            { $addToSet: { remindersSent: targetWindow.key } }
-          );
-
+          // Mark sent so it never duplicates
+          await EventRegistration.updateOne({ _id: user._id }, { $addToSet: { remindersSent: targetWindow.key } });
           dispatchedCount++;
-        })
+        }),
       );
+
+      // Small 250ms breather between chunks so Gmail SMTP socket doesn't choke
+      if (i + CONCURRENCY < attendees.length) {
+        await sleep(250);
+      }
     }
   }
 
