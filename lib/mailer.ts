@@ -12,104 +12,103 @@ const transporter = nodemailer.createTransport({
 });
 
 /* ---------- OTP MAIL ---------- */
+/* ---------- OTP MAIL (OPTIMIZED FOR INBOX DELIVERY) ---------- */
 export async function sendOtpMail(to: string, otp: string) {
-  // Always include a plain-text version for 100% MIME multipart compliance
-  const textContent = `Your SNT Club verification code is: ${otp}\n\nThis code will expire in 5 minutes. If you did not request this verification, please ignore this email.\n\nScience & Technology Club • SKIT Jaipur`;
+  const textContent = `Hi,\n\nYour confirmation code for Science & Technology Club (SKIT) is: ${otp}\n\nThis code is valid for 5 minutes.\n\nBest regards,\nScience & Technology Club, SKIT Jaipur\nhttps://snt-club.vercel.app`;
 
   const htmlContent = `
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="light" />
-  <title>Verification Code</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #eef0f8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;">
-  
-  <!-- Outer Wrapper Table -->
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #eef0f8; width: 100%; margin: 0; padding: 40px 16px;">
-    <tr>
-      <td align="center">
-        
-        <!-- Main Card Container -->
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 480px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #dbe2ea;">
-          
-          <!-- Header Banner -->
-          <tr>
-            <td style="background-color: #0A146E; padding: 32px 36px; text-align: left;">
-              <!-- Mini Badge -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 12px;">
-                <tr>
-                  <td style="background-color: rgba(255, 255, 255, 0.12); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #ffffff; letter-spacing: 1.5px; text-transform: uppercase;">
-                    S&amp;T CLUB &bull; SKIT
-                  </td>
-                </tr>
-              </table>
-              <div style="font-size: 11px; font-weight: 700; color: #EE4B76; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;">Security Verification</div>
-              <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff; line-height: 1.3;">One-Time Password</h1>
-            </td>
-          </tr>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="color-scheme" content="light" />
+      <title>Your Access Code</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+      
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f1f5f9; width: 100%; margin: 0; padding: 32px 16px;">
+        <tr>
+          <td align="center">
+            
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 480px; width: 100%; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+              
+              <!-- Club Header Banner -->
+              <tr>
+                <td style="background-color: #0A146E; padding: 22px 32px;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td>
+                        <span style="font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: 0.3px;">Science &amp; Technology Club</span>
+                        <span style="font-size: 13px; color: #93c5fd; margin-left: 6px;">&bull; SKIT Jaipur</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
 
-          <!-- Body Content -->
-          <tr>
-            <td style="padding: 36px 36px 28px 36px; background-color: #ffffff;">
-              <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #475569;">
-                Use the verification code below to complete your authentication with <strong>SNT Club</strong>. Never share this code with anyone.
-              </p>
+              <!-- Body Content -->
+              <tr>
+                <td style="padding: 32px 32px 24px 32px; background-color: #ffffff;">
+                  <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #0f172a;">
+                    Hello,
+                  </p>
+                  <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #475569;">
+                    Here is your single-use code to complete your registration for the upcoming session:
+                  </p>
 
-              <!-- OTP Display Box -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
-                <tr>
-                  <td align="center" style="background-color: #f0f3ff; border: 1px solid #c7d0f8; border-radius: 8px; padding: 20px 10px;">
-                    <span style="font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 38px; font-weight: 800; color: #0A146E; letter-spacing: 8px; display: inline-block;">${otp}</span>
-                  </td>
-                </tr>
-              </table>
+                  <!-- Code Box -->
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
+                    <tr>
+                      <td align="center" style="background-color: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 18px 10px;">
+                        <span style="font-family: 'SF Mono', Consolas, 'Courier New', monospace; font-size: 34px; font-weight: 800; color: #0A146E; letter-spacing: 6px; display: inline-block;">${otp}</span>
+                      </td>
+                    </tr>
+                  </table>
 
-              <!-- Expiry Alert -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                <tr>
-                  <td style="background-color: #fff8ed; border: 1px solid #fed7aa; border-radius: 6px; padding: 10px 16px; text-align: center;">
-                    <p style="margin: 0; font-size: 13px; color: #92400e; font-weight: 500;">
-                      This code expires in <strong>5 minutes</strong>
-                    </p>
-                  </td>
-                </tr>
-              </table>
+                  <!-- Expiry Note -->
+                  <p style="margin: 0; font-size: 13px; color: #64748b; line-height: 1.5;">
+                    ⏱️ This code remains valid for <strong>5 minutes</strong>. If you did not make this request, you can safely ignore this message.
+                  </p>
+                </td>
+              </tr>
 
-              <p style="margin: 24px 0 0 0; font-size: 13px; line-height: 1.5; color: #64748b;">
-                If you did not request this code, please disregard this email or notify the administrative team.
-              </p>
-            </td>
-          </tr>
+              <!-- Footer -->
+              <tr>
+                <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px 32px; text-align: left;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
+                        S&amp;T Club &bull; SKIT Jaipur
+                      </td>
+                      <td align="right" style="font-size: 12px;">
+                        <a href="https://snt-club.vercel.app" target="_blank" style="color: #0A146E; font-weight: 600; text-decoration: underline;">snt-club.vercel.app</a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
 
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 36px; text-align: center;">
-              <p style="margin: 0; font-size: 12px; font-weight: 600; color: #0A146E;">
-                Science &amp; Technology Club
-              </p>
-              <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8;">
-                Swami Keshvanand Institute of Technology, Management &amp; Gramothan, Jaipur
-              </p>
-            </td>
-          </tr>
+            </table>
 
-        </table>
+          </td>
+        </tr>
+      </table>
 
-      </td>
-    </tr>
-  </table>
-
-</body>
-</html>
+    </body>
+    </html>
   `.trim();
 
   await transporter.sendMail({
-    from: `"Science & Technology Club" <${process.env.EMAIL_USER}>`,
+    from: `"Science & Technology Club, SKIT" <${process.env.EMAIL_USER}>`,
     to,
-    subject: 'Your OTP Verification Code | S&T Club',
+    replyTo: process.env.EMAIL_USER,
+    subject: `${otp} is your S&T Club verification code`,
+    headers: {
+      'X-Priority': '1 (Highest)',
+      'X-MSMail-Priority': 'High',
+      Importance: 'High',
+    },
     text: textContent,
     html: htmlContent,
   });
@@ -232,7 +231,7 @@ export async function sendEventConfirmationMail(
   eventDate: string,
   eventTime: string,
   venue: string,
-  startDateTime: string = "",
+  startDateTime: string = '',
 ) {
   // Synchronized plain-text version for 100% multipart consistency
   const textContent =
@@ -374,7 +373,7 @@ export async function sendEventConfirmationMail(
         venue,
       });
     } catch (err) {
-      console.error("[ICS] Error generating invite:", err);
+      console.error('[ICS] Error generating invite:', err);
     }
   }
 
@@ -389,8 +388,8 @@ export async function sendEventConfirmationMail(
     ...(icsContent
       ? {
           icalEvent: {
-            filename: "invite.ics",
-            method: "REQUEST",
+            filename: 'invite.ics',
+            method: 'REQUEST',
             content: icsContent,
           },
         }
@@ -406,9 +405,9 @@ export async function sendEventReminderMail(
   timeframeLabel: string, // e.g. "Starts in 3 Days", "Starts in 1 Hour"
   eventDate: string,
   eventTime: string,
-  venue: string
+  venue: string,
 ) {
-  const textContent = 
+  const textContent =
     `Hi ${name},\n\n` +
     `Reminder: ${eventTitle} is scheduled ${timeframeLabel.toLowerCase()}.\n\n` +
     `Details:\n` +
